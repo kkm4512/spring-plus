@@ -12,6 +12,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+
 @RestController
 @RequiredArgsConstructor
 public class TodoController {
@@ -29,9 +33,22 @@ public class TodoController {
     @GetMapping("/todos")
     public ResponseEntity<Page<TodoResponse>> getTodos(
             @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int size
-    ) {
-        return ResponseEntity.ok(todoService.getTodos(page, size));
+            @RequestParam(defaultValue = "10") int size,
+            // 사용자가 기재할 날씨
+            @RequestParam(required = false) String inputWeather,
+            // 시작 기간
+            @RequestParam(required = false) LocalDateTime startPeriod,
+            // 끝나는 기간
+            @RequestParam(required = false) LocalDateTime endPeriod
+
+            ) {
+        return ResponseEntity.ok(todoService.getTodos(
+                page,
+                size,
+                inputWeather,
+                startPeriod,
+                endPeriod
+        ));
     }
 
     @GetMapping("/todos/{todoId}")

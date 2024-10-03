@@ -33,7 +33,7 @@ public class FilterConfig {
             }
         }, UsernamePasswordAuthenticationFilter.class);
 
-        // auth 경로 이외에 인증되지않았으면 403 에러남
+//         auth 경로 이외에 인증되지않았으면 403 에러남
         http.authorizeHttpRequests(authReq ->
                 authReq.requestMatchers("/auth/**").permitAll()
                         .anyRequest().authenticated()

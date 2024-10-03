@@ -9,8 +9,11 @@ import org.example.expert.domain.manager.repository.ManagerRepository;
 import org.example.expert.domain.todo.dto.request.TodoSaveRequest;
 import org.example.expert.domain.todo.dto.response.TodoResponse;
 import org.example.expert.domain.todo.dto.response.TodoSaveResponse;
+import org.example.expert.domain.todo.dto.response.TodoSearchResponseDto;
 import org.example.expert.domain.todo.entity.Todo;
 import org.example.expert.domain.todo.repository.TodoRepository;
+import org.example.expert.domain.todo.repository.TodoRepositoryQuery;
+import org.example.expert.domain.todo.repository.TodoRepositoryQueryImpl;
 import org.example.expert.domain.user.dto.response.UserResponse;
 import org.example.expert.domain.user.entity.User;
 import org.springframework.cglib.core.Local;
@@ -33,6 +36,7 @@ public class TodoService {
     private final TodoRepository todoRepository;
     private final ManagerRepository managerRepository;
     private final WeatherClient weatherClient;
+    private final TodoRepositoryQuery todoRepositoryQuery;
 
     @Transactional
     public TodoSaveResponse saveTodo(AuthUser authUser, TodoSaveRequest todoSaveRequest) {
@@ -92,6 +96,22 @@ public class TodoService {
                 new UserResponse(user.getId(), user.getEmail()),
                 todo.getCreatedAt(),
                 todo.getModifiedAt()
+        );
+    }
+
+    public Page<TodoSearchResponseDto> getSearchTodos(
+            String title,
+            LocalDateTime startPeriod,
+            LocalDateTime endPeriod,
+            String nickname,
+            Pageable pageable
+    ) {
+        return todoRepositoryQuery.searchTodosByFilter(
+                title,
+                startPeriod,
+                endPeriod,
+                nickname,
+                pageable
         );
     }
 }

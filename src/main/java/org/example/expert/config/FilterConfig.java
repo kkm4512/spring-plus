@@ -29,13 +29,27 @@ public class FilterConfig {
             protected boolean shouldNotFilter(HttpServletRequest req) throws ServletException {
                 String path = req.getRequestURI();
                 // auth로 시작되는 경로에 대해서는 필터가 진행되지않음
-                return path.startsWith("/auth");
+                System.out.println(path);
+                if (
+                        path.startsWith("/auth") ||
+                        path.startsWith("/test") ||
+                        path.startsWith("/health") ||
+                        path.startsWith("/images")
+                )
+                {
+                    return true;
+                } else {
+                    return false;
+                }
             }
         }, UsernamePasswordAuthenticationFilter.class);
 
 //         auth 경로 이외에 인증되지않았으면 403 에러남
         http.authorizeHttpRequests(authReq ->
                 authReq.requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/test").permitAll()
+                        .requestMatchers("/health/**").permitAll()
+                        .requestMatchers("/images").permitAll()
                         .anyRequest().authenticated()
         );
 

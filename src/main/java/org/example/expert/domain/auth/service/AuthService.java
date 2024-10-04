@@ -9,11 +9,15 @@ import org.example.expert.domain.auth.dto.response.SigninResponse;
 import org.example.expert.domain.auth.dto.response.SignupResponse;
 import org.example.expert.domain.auth.exception.AuthException;
 import org.example.expert.domain.common.exception.InvalidRequestException;
+import org.example.expert.domain.image.S3Uploader;
 import org.example.expert.domain.user.entity.User;
 import org.example.expert.domain.user.enums.UserRole;
 import org.example.expert.domain.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @Service
 @RequiredArgsConstructor
@@ -23,9 +27,11 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+    private final S3Uploader s3Uploader;
 
     @Transactional
-    public SignupResponse signup(SignupRequest signupRequest) {
+    public SignupResponse signup(SignupRequest signupRequest, MultipartFile multipartFile) throws IOException {
+        String fileName = "";
 
         if (userRepository.existsByEmail(signupRequest.getEmail())) {
             throw new InvalidRequestException("이미 존재하는 이메일입니다.");
@@ -34,13 +40,25 @@ public class AuthService {
         String encodedPassword = passwordEncoder.encode(signupRequest.getPassword());
 
         UserRole userRole = UserRole.of(signupRequest.getUserRole());
+        User newUser;
+        if (multipartFile == null || multipartFile.isEmpty()) {
+            newUser = new User(
+                    signupRequest.getEmail(),
+                    signupRequest.getNickname(),
+                    encodedPassword,
+                    userRole
+            );
+        } else {
+            fileName = s3Uploader.upload(multipartFile,"images");
+            newUser = new User(
+                    signupRequest.getEmail(),
+                    signupRequest.getNickname(),
+                    encodedPassword,
+                    userRole,
+                    fileName
+            );
+        }
 
-        User newUser = new User(
-                signupRequest.getEmail(),
-                signupRequest.getNickname(),
-                encodedPassword,
-                userRole
-        );
         User savedUser = userRepository.save(newUser);
 
         String bearerToken = jwtUtil.createToken(savedUser.getId(), savedUser.getEmail(),savedUser.getNickname()  ,userRole);

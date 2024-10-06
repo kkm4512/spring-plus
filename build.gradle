@@ -50,6 +50,8 @@ dependencies {
 
     // Spring Security
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: '3.3.3'
+    testImplementation 'org.springframework.security:spring-security-test'
+
 
     // health
     implementation 'org.springframework.boot:spring-boot-starter-actuator'

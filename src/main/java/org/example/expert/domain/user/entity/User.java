@@ -8,10 +8,12 @@ import org.example.expert.domain.common.dto.AuthUser;
 import org.example.expert.domain.common.entity.Timestamped;
 import org.example.expert.domain.user.enums.UserRole;
 
-@Getter
+
+
 @Entity
-@NoArgsConstructor
+@Getter
 @Table(name = "users")
+@NoArgsConstructor
 public class User extends Timestamped {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

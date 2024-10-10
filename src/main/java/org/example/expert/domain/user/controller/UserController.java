@@ -30,4 +30,12 @@ public class UserController {
         AuthUser authUser = userDetails.getAuthUser();
         userService.changePassword(authUser.getId(), userChangePasswordRequest);
     }
+
+    // 유저의 닉네임으로 조회하는 API
+    @GetMapping("/users/search")
+    public ResponseEntity<UserResponse> searchUser(
+            @RequestParam String nickname
+    ) {
+        return ResponseEntity.ok(userService.searchUser(nickname));
+    }
 }

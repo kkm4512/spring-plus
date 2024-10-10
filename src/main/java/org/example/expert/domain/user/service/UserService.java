@@ -7,6 +7,7 @@ import org.example.expert.domain.user.dto.request.UserChangePasswordRequest;
 import org.example.expert.domain.user.dto.response.UserResponse;
 import org.example.expert.domain.user.entity.User;
 import org.example.expert.domain.user.repository.UserRepository;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,5 +48,17 @@ public class UserService {
                 !userChangePasswordRequest.getNewPassword().matches(".*[A-Z].*")) {
             throw new InvalidRequestException("새 비밀번호는 8자 이상이어야 하고, 숫자와 대문자를 포함해야 합니다.");
         }
+    }
+
+    /**
+     * 유저의 닉네임이 완벽히 일치해야 유저의 정보를 반환하는 메서드
+     *
+     * @param nickname 조회할 유저의 닉네임
+     * @return ResponseEntity<UserResponse> 유저 조회 성공시 돌려줄 정보
+     */
+    @Transactional(readOnly = true)
+    public UserResponse searchUser(String nickname) {
+        User user = userRepository.findByNickname(nickname).orElseThrow(() -> new InvalidRequestException("User not found"));
+        return new UserResponse(user.getId(), user.getEmail());
     }
 }

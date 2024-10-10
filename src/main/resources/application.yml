@@ -17,6 +17,11 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
+        show_sql: true
+        jdbc:
+          batch_size: 500
+        order_updates: true
+        order_inserts: true
 
 jwt:
   secret:
@@ -45,3 +50,4 @@ cloud:
       auto: false
     stack:
       auto: false
+

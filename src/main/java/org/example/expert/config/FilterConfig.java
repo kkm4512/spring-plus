@@ -28,8 +28,7 @@ public class FilterConfig {
             @Override
             protected boolean shouldNotFilter(HttpServletRequest req) throws ServletException {
                 String path = req.getRequestURI();
-                // auth로 시작되는 경로에 대해서는 필터가 진행되지않음
-                System.out.println(path);
+                // 밑의 경로에 대해서는 필터를 실행시키지 않음
                 if (
                         path.startsWith("/auth") ||
                         path.startsWith("/test") ||
